@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<title>MiniSQLite Guide</title>
+<style>
+@page { size: A4; margin: 18mm; }
+body { font-family: "DejaVu Sans", sans-serif; color: #202124; line-height: 1.45; }
+h1 { color: #174a5b; font-size: 28px; margin-bottom: 4px; }
+h2 { color: #174a5b; border-bottom: 1px solid #b8cbd1; padding-bottom: 4px; margin-top: 22px; }
+h3 { color: #2f6575; margin-bottom: 4px; }
+.subtitle { color: #52666d; font-size: 14px; }
+code, pre { font-family: "DejaVu Sans Mono", monospace; }
+pre { background: #eef4f5; border-left: 4px solid #2f6575; padding: 10px; white-space: pre-wrap; }
+table { width: 100%; border-collapse: collapse; font-size: 10px; }
+th, td { border: 1px solid #b8cbd1; padding: 5px; text-align: left; vertical-align: top; }
+th { background: #dcecef; }
+.small { font-size: 10px; color: #52666d; }
+</style>
+</head>
+<body>
+<h1>MiniSQLite</h1>
+<p class="subtitle">Փոքր ուսումնական SQL տվյալների բազա Python-ով</p>
+
+<h2>Գործարկում</h2>
+<pre>cd /home/shavarsh/minisqlite
+python3 minisqlite.py</pre>
+<p>Ծրագիրը օգտագործում է <code>minidb.json</code> ֆայլը։ Փոփոխությունները պահվում են յուրաքանչյուր փոփոխող հրամանից հետո։</p>
+
+<h2>23 Feature Checklist</h2>
+<table>
+<tr><th>#</th><th>Feature</th><th>Ինչ է կատարում</th></tr>
+<tr><td>1</td><td>CREATE TABLE</td><td>Ստեղծում է աղյուսակ INTEGER և TEXT սյունակներով։</td></tr>
+<tr><td>2</td><td>INSERT INTO</td><td>Ավելացնում է նոր գրառումներ։</td></tr>
+<tr><td>3</td><td>SELECT *</td><td>Ցուցադրում է գրառումները։</td></tr>
+<tr><td>4</td><td>WHERE</td><td>Ֆիլտրում է տվյալները պայմանով։</td></tr>
+<tr><td>5</td><td>UPDATE</td><td>Փոփոխում է գրառումները։</td></tr>
+<tr><td>6</td><td>DELETE</td><td>Ջնջում է գրառումները։</td></tr>
+<tr><td>7</td><td>Persistence</td><td>Պահպանում և վերականգնում է տվյալները JSON ֆայլից։</td></tr>
+<tr><td>8</td><td>Error handling</td><td>Մշակում է սխալ SQL, type և constraint սխալները։</td></tr>
+<tr><td>9</td><td>REPL commands</td><td>.help, .tables, .schema, .database, .count, .version, .exit, .quit։</td></tr>
+<tr><td>10</td><td>DROP TABLE</td><td>Հեռացնում է ամբողջ աղյուսակը։</td></tr>
+<tr><td>11</td><td>ALTER TABLE ADD COLUMN</td><td>Ավելացնում է նոր սյունակ։</td></tr>
+<tr><td>12</td><td>COUNT()</td><td>Հաշվում է գրառումները։</td></tr>
+<tr><td>13</td><td>ORDER BY</td><td>Դասավորում է արդյունքները ASC կամ DESC կարգով։</td></tr>
+<tr><td>14</td><td>LIMIT</td><td>Սահմանափակում է արդյունքների քանակը։</td></tr>
+<tr><td>15</td><td>DISTINCT</td><td>Հեռացնում է կրկնվող արժեքները։</td></tr>
+<tr><td>16</td><td>AND / OR</td><td>Միավորում է WHERE պայմանները։</td></tr>
+<tr><td>17</td><td>LIKE</td><td>Որոնում է % և _ pattern-ներով։</td></tr>
+<tr><td>18</td><td>Aggregate functions</td><td>SUM, AVG, MIN և MAX հաշվարկներ։</td></tr>
+<tr><td>19</td><td>GROUP BY</td><td>Խմբավորում է արդյունքները։</td></tr>
+<tr><td>20</td><td>INNER JOIN</td><td>Միավորում է երկու աղյուսակ։</td></tr>
+<tr><td>21</td><td>CREATE INDEX</td><td>Պահպանում է index metadata-ն։</td></tr>
+<tr><td>22</td><td>PRIMARY KEY</td><td>Ապահովում է եզակի և ոչ NULL արժեք։</td></tr>
+<tr><td>23</td><td>FOREIGN KEY</td><td>Ստուգում է հղումները մեկ այլ աղյուսակին։</td></tr>
+</table>
+
+<h2>Օրինակներ</h2>
+<h3>Աղյուսակ և տվյալներ</h3>
+<pre>CREATE TABLE students (id INTEGER PRIMARY KEY, name TEXT, city TEXT);
+INSERT INTO students VALUES (26, 'Նոր Ուսանող', 'Երևան');
+SELECT * FROM students;
+SELECT * FROM students WHERE city = 'Երևան';</pre>
+<h3>Փոփոխում և ջնջում</h3>
+<pre>UPDATE students SET city = 'Գյումրի' WHERE id = 26;
+DELETE FROM students WHERE id = 26;</pre>
+<h3>Հարցումներ</h3>
+<pre>SELECT DISTINCT city FROM students ORDER BY city ASC LIMIT 5;
+SELECT city, COUNT(*) FROM students GROUP BY city;
+SELECT SUM(id), AVG(id), MIN(id), MAX(id) FROM students;</pre>
+<h3>Ծառայողական հրամաններ</h3>
+<pre>.help
+.tables
+.schema students
+.count students
+.database
+.version
+.exit</pre>
+
+<h2>Թեստեր</h2>
+<pre>cd /home/shavarsh/minisqlite
+python3 -m py_compile minisqlite.py test_minisqlite.py
+python3 -m unittest -v</pre>
+<p class="small">MiniSQLite project documentation. Version 2.0</p>
+</body>
+</html>
